@@ -1,24 +1,93 @@
+# Dépendances
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+/coverage
+
+# Production
+/build
+/dist
+/out
+/.next/
+/out/
+
+# Environnement
+#.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+.pnpm-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Éditeurs et IDE
+/.idea
+/.vscode
+*.swp
+*.swo
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.sublime-workspace
+*.sublime-project
+.project
+
+# Fichiers spécifiques à Shadcn
+# Si vous utilisez un système de thème personnalisé
+.shadcn-store
+
+# Caches et fichiers temporaires
+.cache/
+.temp/
+.tmp/
+
+# Storybook
+/storybook-static
+
+# Styles et CSS générés
+*.css.map
+*.sass.map
+*.scss.map
+
+# Fichiers de verrouillage de packages (optionnel: décommentez si vous voulez les ignorer)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# PWA
+**/public/workbox-*.js
+**/public/sw.js
+**/public/service-worker.js
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Documentation générée
+/docs
+
+# Fichiers de build spécifiques à Vite (si vous utilisez Vite)
+/.vite/
+
+# Fichiers de build spécifiques à Next.js (si vous utilisez Next.js)
+.next/
+.vercel/
+next-sitemap.js
+sitemap*.xml
+robots.txt
+
+# Fichiers de build spécifiques à Create React App (si vous utilisez CRA)
+/build
+/coverage
+
+# Turbo (si vous utilisez TurboRepo)
+.turbo
