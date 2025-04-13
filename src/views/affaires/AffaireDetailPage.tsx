@@ -52,9 +52,12 @@ import {
   Eye,
   AlertCircle,
   Clock,
-  CheckCircle2
+  CheckCircle2,
+  UserPlus
 } from 'lucide-react';
 import ClientInfoCard from '@/components/offre/ClientInfoCard';
+import UserCard from './UserCard';
+import { User } from '@/services/UserService';
 
 
 
@@ -65,7 +68,11 @@ const AffaireDetailPage: React.FC = () => {
   const [statut, setStatut] = useState('');
   const [commentaire, setCommentaire] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  
+  const [dateChangement, setDateChangement] = useState(new Date().toISOString().split('T')[0]); // Format YYYY-MM-DD avec la date du jour par défaut
+  const [selectedResponsable, setSelectedResponsable] = useState('');
+  const [responsableDialogOpen, setResponsableDialogOpen] = useState(false);
+
+
   // Utilisation du hook pour récupérer les détails de l'affaire
   const {
     affaire,
@@ -75,14 +82,28 @@ const AffaireDetailPage: React.FC = () => {
     genererFacture,
     marquerRapportTermine,
     exportPdf,
+    assignResponsable,
+    availableResponsables = [] as User[]
   } = useAffaire(id ? parseInt(id) : null);
 
   // Gérer le changement de statut
   const handleChangeStatut = async () => {
-    const result = await changeStatut({ statut, commentaire });
+    const result = await changeStatut({ statut, commentaire, dateChangement });
     if (result && result.success) {
       setDialogOpen(false);
       setCommentaire('');
+    }
+  };
+
+  const handleAssignResponsable = async () => {
+    if (selectedResponsable) {
+      await assignResponsable({
+        responsable_id: parseInt(selectedResponsable),
+        commentaire,
+        dateChangement
+      });
+      setResponsableDialogOpen(false);
+      setSelectedResponsable('');
     }
   };
 
@@ -111,6 +132,7 @@ const AffaireDetailPage: React.FC = () => {
       navigate(`/clients/${affaire.offre.client.id}`);
     }
   };
+
 
   // Obtenir les transitions autorisées pour le statut actuel
   const getTransitionsAutorisees = (currentStatut: string): string[] => {
@@ -207,6 +229,14 @@ const AffaireDetailPage: React.FC = () => {
             Retour à la liste
           </Button>
           
+          <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => setResponsableDialogOpen(true)}
+            >
+              <UserPlus size={16} />
+              Assigner responsable
+            </Button>
           <div className="flex flex-wrap gap-2">
             <Button 
               variant="outline" 
@@ -238,74 +268,135 @@ const AffaireDetailPage: React.FC = () => {
             
             {transitionsAutorisees.length > 0 && (
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="default">
-                    Changer le statut
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Changer le statut de l'affaire</DialogTitle>
-                    <DialogDescription>
-                      Sélectionnez le nouveau statut et ajoutez un commentaire si nécessaire.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Nouveau statut</label>
-                      <Select onValueChange={setStatut} value={statut}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un statut" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {transitionsAutorisees.map((s) => (
-                            <SelectItem key={s} value={s}>
-                              {s === 'BROUILLON' ? 'Brouillon' :
-                               s === 'VALIDE' ? 'Validée' :
-                               s === 'EN_COURS' ? 'En cours' :
-                               s === 'EN_PAUSE' ? 'En pause' :
-                               s === 'TERMINEE' ? 'Terminée' :
-                               s === 'ANNULEE' ? 'Annulée' : s}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Commentaire (optionnel)</label>
-                      <Textarea
-                        value={commentaire}
-                        onChange={(e) => setCommentaire(e.target.value)}
-                        placeholder="Ajouter un commentaire sur ce changement de statut"
-                        rows={4}
+              <DialogTrigger asChild>
+                <Button variant="default">
+                  Changer le statut
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Changer le statut de l'affaire</DialogTitle>
+                  <DialogDescription>
+                    Sélectionnez le nouveau statut, la date du changement et ajoutez un commentaire si nécessaire.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Nouveau statut</label>
+                    <Select onValueChange={setStatut} value={statut}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un statut" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {transitionsAutorisees.map((s) => (
+                          <SelectItem key={s} value={s}>
+                            {s === 'BROUILLON' ? 'Brouillon' :
+                             s === 'VALIDE' ? 'Validée' :
+                             s === 'EN_COURS' ? 'En cours' :
+                             s === 'EN_PAUSE' ? 'En pause' :
+                             s === 'TERMINEE' ? 'Terminée' :
+                             s === 'ANNULEE' ? 'Annulée' : s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Date du changement</label>
+                    <div className="flex w-full max-w-sm items-center space-x-2">
+                      <input
+                        type="date"
+                        value={dateChangement}
+                        onChange={(e) => setDateChangement(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       />
                     </div>
                   </div>
-                  <DialogFooter>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setDialogOpen(false)}
-                    >
-                      Annuler
-                    </Button>
-                    <Button 
-                      onClick={handleChangeStatut}
-                      disabled={!statut}
-                    >
-                      Confirmer
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Commentaire (optionnel)</label>
+                    <Textarea
+                      value={commentaire}
+                      onChange={(e) => setCommentaire(e.target.value)}
+                      placeholder="Ajouter un commentaire sur ce changement de statut"
+                      rows={4}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    onClick={handleChangeStatut}
+                    disabled={!statut || !dateChangement}
+                  >
+                    Confirmer
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             )}
           </div>
         </div>
+
+        {/* Assign Responsible Dialog */}
+        <Dialog open={responsableDialogOpen} onOpenChange={setResponsableDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Assigner un responsable</DialogTitle>
+              <DialogDescription>
+                Sélectionnez un responsable pour cette affaire.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Responsable</label>
+                <Select onValueChange={setSelectedResponsable} value={selectedResponsable}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un responsable" />
+                  </SelectTrigger>
+                  <SelectContent>
+
+                                        {
+availableResponsables.map((responsable) => (
+
+  <SelectItem key={responsable.id} value={responsable.id}>
+
+    {responsable.username }
+
+  </SelectItem>
+
+))
+}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setResponsableDialogOpen(false)}
+              >
+                Annuler
+              </Button>
+              <Button
+                onClick={handleAssignResponsable}
+                disabled={!selectedResponsable}
+              >
+                Confirmer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         
         {/* Title and Status */}
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold">Affaire {affaire.reference}</h1>
           <Badge className="text-base px-3 py-1">
-            {affaire.statut_display}
+            {affaire.statut}
           </Badge>
         </div>
         
@@ -707,6 +798,13 @@ const AffaireDetailPage: React.FC = () => {
         </div>
         <div className="col-span-1 space-y-6">
           {/* Informations client */}
+
+          {affaire.responsable && (
+            <UserCard 
+              user={affaire.responsable as User} 
+              
+            />
+          )}
           <ClientInfoCard 
             client={affaire.offre.client} 
             contact={affaire.offre.contact}

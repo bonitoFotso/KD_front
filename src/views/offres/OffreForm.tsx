@@ -34,6 +34,7 @@ const OffreForm: React.FC = () => {
     produit_principal: null,
     notes: '',
     montant: 0,
+    doc_type: 'OFF',
   });
 
   // Auxiliary states

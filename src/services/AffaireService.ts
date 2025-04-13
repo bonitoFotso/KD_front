@@ -13,7 +13,7 @@ export interface IAffaire {
   date_fin_reelle: string | null;
   statut: string;
   statut_display: string;
-  responsable: number | IUser | null;
+  responsable: IUser | null;
   responsable_nom: string | null;
   montant_total: number;
   montant_facture: number;
@@ -100,6 +100,13 @@ export interface IAffaireCreate {
 export interface IStatutChange {
   statut: string;
   commentaire?: string;
+  dateChangement?: string;
+}
+
+export interface IresponsableData {
+  responsable_id: number;
+  commentaire?: string;
+  dateChangement?: string;
 }
 
 export interface IDashboardData {
@@ -208,6 +215,8 @@ class AffaireService {
     return api.delete(`${this.baseUrl}${id}/`);
   }
 
+
+
   /**
    * Change le statut d'une affaire
    * @param id - ID de l'affaire
@@ -218,6 +227,15 @@ class AffaireService {
     return api.post(`${this.baseUrl}${id}/change_statut/`, statutData);
   }
 
+  /**
+   * asssigné un responsable à une affaire
+   * @param id - ID de l'affaire
+   * @param responsableData - ID du responsable, message et date de changement
+   * @returns Promise avec la réponse
+   */
+  async assignerResponsable(id: number, responsabledata: IresponsableData): Promise<AxiosResponse<{ success: boolean; message: string; responsable: IUser }>> {
+    return api.post(`${this.baseUrl}${id}/assigner_responsable/`, responsabledata );
+  }
   /**
    * Récupère les rapports associés à une affaire
    * @param id - ID de l'affaire
@@ -262,6 +280,8 @@ class AffaireService {
   async getDashboard(): Promise<AxiosResponse<IDashboardData>> {
     return api.get(`${this.baseUrl}dashboard/`);
   }
+
+
 
   /**
    * Exporte la liste des affaires en CSV

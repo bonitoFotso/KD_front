@@ -45,6 +45,9 @@ export interface AffaireLine {
   produitName:string;
   produitCategory:string;
   produitCount:number;
+
+  // responsable
+  responsable:string;
 }
 
 /**
@@ -103,6 +106,7 @@ export function linearizeAffaire(data: IAffaire[]): AffaireLine[] {
       produitName: affaire.offre.produit_principal.name,
       produitCategory: affaire.offre.produit_principal.category,
       produitCount: affaire.offre.produits.length,
+      responsable: affaire.responsable?.username,
     };
   });
 }

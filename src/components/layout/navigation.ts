@@ -120,17 +120,18 @@ export const getNavigationItems = (currentEntity: string): NavigationItem[] => [
         entitySpecific: true,
       },
       {
-        name: "Proformas",
-        href: (entity) => getEntityLink("/proformas", entity),
-        icon: FileText,
-        entitySpecific: true,
-      },
-      {
         name: "Offres",
         href: (entity) => getEntityLink("/offres", entity),
         icon: FileText,
         entitySpecific: true,
       },
+      {
+        name: "Proformas",
+        href: (entity) => getEntityLink("/proformas", entity),
+        icon: FileText,
+        entitySpecific: true,
+      },
+      
 
       {
         name: "Affaires",

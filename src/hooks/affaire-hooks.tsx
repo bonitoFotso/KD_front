@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { affaireService, IAffaire, IAffaireDetail, IAffaireCreate, IStatutChange, IAffaireFilters, IDashboardData, IAffaireInitData } from '@/services/AffaireService';
+import { affaireService, IAffaire, IAffaireDetail, IAffaireCreate, IStatutChange, IAffaireFilters, IDashboardData, IAffaireInitData, IresponsableData } from '@/services/AffaireService';
 import { AxiosError } from 'axios';
+import UserService, { User } from '@/services/UserService';
 
 // Hook pour récupérer la liste des affaires
 export const useAffaires = (initialFilters: IAffaireFilters = {}) => {
@@ -58,6 +59,27 @@ export const useAffaire = (id: number | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [initData, setInitData] = useState<IAffaireInitData | null>(null);
+  const [availableResponsables, setAvailableResponsables] = useState<User[]>([]);
+  const fetchAvailableResponsables = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await UserService.getUsers();
+      setAvailableResponsables(response.users? response.users : []);
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      setError(axiosError.message || 'Une erreur est survenue lors de la récupération des responsables disponibles');
+    } finally {
+      setLoading(false);
+    }
+  }
+  , []);
+  useEffect(() => {
+    fetchAvailableResponsables();
+  }
+  , [fetchAvailableResponsables]);
+  // Fonction pour récupérer les données d'initialisation
+  // (ex: pour le formulaire de création ou d'édition)
 
   const getInitData = useCallback(async (id: number) => {
     const response = await affaireService.getInitData(id);
@@ -101,6 +123,24 @@ export const useAffaire = (id: number | null) => {
     } catch (err) {
       const axiosError = err as AxiosError;
       setError(axiosError.message || 'Erreur lors du changement de statut');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [id, affaire, fetchAffaire]);
+
+  //fonction pour assigner un responsable
+  const assignResponsable = useCallback(async (responsableData: IresponsableData) => {
+    if (!id || !affaire) return null;
+    
+    setLoading(true);
+    try {
+      const response = await affaireService.assignerResponsable(id, responsableData);
+      await fetchAffaire(); // Rafraîchir les données après l'assignation
+      return response.data;
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      setError(axiosError.message || 'Erreur lors de l\'assignation du responsable');
       return null;
     } finally {
       setLoading(false);
@@ -173,7 +213,9 @@ export const useAffaire = (id: number | null) => {
     marquerRapportTermine,
     exportPdf,
     initData,
-    getInitData
+    getInitData,
+    assignResponsable,
+    availableResponsables
   };
 };
 

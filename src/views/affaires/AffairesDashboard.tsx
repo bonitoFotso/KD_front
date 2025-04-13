@@ -87,7 +87,7 @@ const AffairesDashboard = () => {
               fill="#8884d8"
               dataKey="count"
             >
-              {chartData.montantsParStatut.map((entry, index) => (
+              {chartData.montantsParStatut.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'][index % 5]} />
               ))}
             </Pie>
