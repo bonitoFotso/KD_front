@@ -46,8 +46,6 @@ export interface AffaireLine {
   produitCategory:string;
   produitCount:number;
 
-  // responsable
-  responsable:string;
 }
 
 /**
@@ -71,7 +69,7 @@ export function linearizeAffaire(data: IAffaire[]): AffaireLine[] {
       dateDebut: affaire.date_debut,
       dateFinPrevue: affaire.date_fin_prevue,
       dateFinReelle: affaire.date_fin_reelle,
-      responsable: affaire.responsable_nom,
+      responsable: affaire.responsable?.username ?? null,
       progression: affaire.progression,
       enRetard: affaire.en_retard,
       montantRestantAFacturer: affaire.montant_restant_a_facturer,
@@ -106,7 +104,6 @@ export function linearizeAffaire(data: IAffaire[]): AffaireLine[] {
       produitName: affaire.offre.produit_principal.name,
       produitCategory: affaire.offre.produit_principal.category,
       produitCount: affaire.offre.produits.length,
-      responsable: affaire.responsable?.username,
     };
   });
 }

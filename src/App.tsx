@@ -44,7 +44,7 @@ import OpportunityManagement from "./views/opportunites/oportuityPage";
 import PortalSelection from "./components/layout/PortalSelection";
 
 function App() {
-  const defaultEntity = entities[0].toLowerCase();
+  const defaultEntity = localStorage.getItem('entity');
 
   return (
     <AuthProvider>

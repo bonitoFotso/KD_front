@@ -73,6 +73,7 @@ const PortalSelection: React.FC = () => {
     if (selected) {
       setIsAnimating(true);
       console.log(`Selected option: ${selected}`);
+      localStorage.setItem('entity',selected);
       navigate(`/${selected}`);
       
       // Simulate loading before transition

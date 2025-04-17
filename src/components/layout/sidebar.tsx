@@ -137,9 +137,9 @@ export function Sidebar({ className }: SidebarProps) {
           </Button>
         </div>
 
-        {/* Entity Selector */}
+        {/* Entity Selector 
         <EntitySelector expanded={expanded} isMobile={isMobile} />
-
+*/}
         {/* Search input - only when expanded */}
         {expanded || isMobile ? (
           <div className="p-4 pb-2">

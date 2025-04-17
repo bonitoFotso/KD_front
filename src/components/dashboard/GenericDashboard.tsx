@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 
 // Composants KD
 import KDTable from "@/components/table/KDTable2";
@@ -11,19 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import {
   Tabs,
   TabsContent,
@@ -48,14 +34,11 @@ import {
   Plus,
   Search,
   Filter,
-  FilterX,
   BarChart2,
   PieChart as PieChartIcon,
-  Calendar as CalendarIcon,
   FileBarChart,
   Loader2,
   FileSpreadsheet,
-  RefreshCw
 } from "lucide-react";
 import React from "react";
 
@@ -100,18 +83,13 @@ const GenericDashboard = ({
   searchTerm,
   setSearchTerm,
   onSearch,
-  onFilterByStatus,
-  onFilterByClient,
-  onFilterByDateRange,
   onResetFilters,
   onExport,
   onCreateNew,
   onRowClick,
-  statusDisplayMap,
   emptyStateRenderer,
   linearizeData = (data: unknown) => data, // Par défaut, ne fait rien
   createButtonLabel = "Nouveau",
-  clientsUniques = [], // Pour les filtres
   renderStatusChart,
   renderClientChart,
   renderTimeChart,
@@ -122,11 +100,19 @@ const GenericDashboard = ({
   columns: object; 
   groupByOptions: object; 
   statsConfig: object; 
-  chartData: object; 
+  chartData: {
+    montantsParStatut?: Array<{ name: string; count: number }>;
+  }; 
   analytics: object; 
   loading: boolean; 
   error: string; 
-  filters: object; 
+  filters: {
+    status?: string[];
+    client?: string;
+    page?: number;
+    page_size?: number;
+    [key: string]: unknown;
+  }; 
   totalCount: number; 
   searchTerm?: string;
   setSearchTerm?: (term: string) => void;
@@ -149,110 +135,9 @@ const GenericDashboard = ({
   additionalCharts?: React.ReactNode[];
 }) => {
   const [showFilters, setShowFilters] = useState(false);
-  const [dateRange, setDateRange] = useState<{from?: Date; to?: Date}>({});
   const [activeTab, setActiveTab] = useState('table');
 
   // Gérer l'application des filtres
-  const handleApplyFilters = () => {
-    // Appliquer la plage de dates
-    onFilterByDateRange(dateRange.from, dateRange.to);
-    setShowFilters(false);
-  };
-
-  // Afficher les filtres avancés
-  const renderAdvancedFilters = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 mt-4 border-t dark:border-gray-700">
-      {statusDisplayMap && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Statut</label>
-          <Select
-            onValueChange={(value) => onFilterByStatus(value)}
-            value={filters.status ? filters.status[0] : undefined}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Tous les statuts" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(statusDisplayMap).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
-      {clientsUniques.length > 0 && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Client</label>
-          <Select
-            onValueChange={(value) => onFilterByClient(value)}
-            value={filters.client as string}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Tous les clients" />
-            </SelectTrigger>
-            <SelectContent>
-              {clientsUniques.map((client) => (
-                <SelectItem key={client} value={client}>
-                  {client}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Période</label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-full justify-start text-left font-normal"
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateRange.from ? (
-                dateRange.to ? (
-                  <>
-                    {format(dateRange.from, "dd/MM/yyyy")} -{" "}
-                    {format(dateRange.to, "dd/MM/yyyy")}
-                  </>
-                ) : (
-                  format(dateRange.from, "dd/MM/yyyy")
-                )
-              ) : (
-                "Sélectionner une période"
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              selected={dateRange}
-              onSelect={setDateRange}
-              locale={fr}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <div className="flex items-end gap-2 col-span-full">
-        <Button
-          variant="outline"
-          onClick={onResetFilters}
-          className="flex items-center gap-1"
-        >
-          <FilterX size={16} />
-          Réinitialiser
-        </Button>
-        <Button onClick={handleApplyFilters} className="flex-1">
-          Appliquer
-        </Button>
-      </div>
-    </div>
-  );
 
   // État vide du tableau
   const defaultEmptyState = (
@@ -507,16 +392,7 @@ const GenericDashboard = ({
         </Tabs>
       </KesContainer>
 
-      {/* Bouton d'actualisation flottant */}
-      <Button 
-        variant="outline"
-        size="icon"
-        className="fixed bottom-8 right-8 h-12 w-12 rounded-full shadow-lg"
-        onClick={() => window.location.reload()}
-        title="Actualiser les données"
-      >
-        <RefreshCw size={20} />
-      </Button>
+      
     </div>
   );
 };
