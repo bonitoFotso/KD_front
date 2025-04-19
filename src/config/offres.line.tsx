@@ -101,7 +101,7 @@ export function linearizeOffre(data: OffreDetail[]): LinearizedOffre[] {
     
     // Extraction des catégories uniques de produits
     const produitsCategories = Array.from(
-      new Set(offre.produits.map(p => p.category))
+      new Set(offre.produits.map(p => p.departement))
     );
 
     // Construction de l'objet linéarisé
@@ -161,7 +161,7 @@ export function linearizeOffre(data: OffreDetail[]): LinearizedOffre[] {
       // Produit principal
       produitPrincipalId: offre.produit_principal.id,
       produitPrincipalCode: offre.produit_principal.code,
-      produitPrincipalCategory: offre.produit_principal.category,
+      produitPrincipalCategory: offre.produit_principal.departement,
       produitPrincipalName: offre.produit_principal.name,
       
       // Produits associés

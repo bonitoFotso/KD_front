@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Package, ChevronRight, Tag, Building2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { IProduct } from '@/interfaces';
+import { Produit } from '@/types/produit';
 
 
 interface ProductListProps {
-  products: IProduct[];
+  products: Produit[];
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
@@ -47,7 +47,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                 "px-3 py-1.5 rounded-full text-xs font-medium border",
                 "bg-blue-50 text-blue-600 border-blue-100"
               )}>
-                {product.category.name}
+                {product.departement}
               </span>
               <ChevronRight
                 className={cn(
@@ -98,14 +98,14 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
                         <Tag className="w-3.5 h-3.5" />
                         Code catégorie
                       </span>
-                      <p className="text-sm font-medium text-gray-900">{product.category.code}</p>
+                      <p className="text-sm font-medium text-gray-900">{product.code}</p>
                     </div>
                     <div className="p-4 rounded-lg bg-gray-50/50 border border-gray-100 hover:bg-gray-50 transition-colors">
                       <span className="text-xs font-medium text-gray-500 flex items-center gap-1.5 mb-1">
                         <Building2 className="w-3.5 h-3.5" />
                         Nom de la catégorie
                       </span>
-                      <p className="text-sm font-medium text-gray-900">{product.category.name}</p>
+                      <p className="text-sm font-medium text-gray-900">{product.name}</p>
                     </div>
                   </div>
                 </div>

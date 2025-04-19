@@ -15,7 +15,6 @@ import {
 import { getNavigationItems } from "./navigation";
 import { NavItem } from "./NavItem";
 import { useSidebar } from "@/contexts/SidebarContext";
-import { EntitySelector } from "./EntitySelector";
 import { useEntityContext } from "@/hooks/useEntityContext";
 
 export interface SidebarProps {

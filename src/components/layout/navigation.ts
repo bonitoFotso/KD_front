@@ -14,6 +14,7 @@ import {
   Briefcase,
   GithubIcon,
   PhoneIcon,
+  DoorOpen,
 } from "lucide-react";
 
 // Liste des entités disponibles
@@ -74,6 +75,14 @@ export const resolveHref = (
 // Configuration principale de la navigation
 export const getNavigationItems = (currentEntity: string): NavigationItem[] => [
   // Main category
+{
+  name: "Portail",
+  href: "/portail",
+  icon: DoorOpen,
+  category: "main",
+  badge: { text: "Nouveau", variant: "success" },
+},
+
   {
     name: "Tableau de bord",
     href: "/",
@@ -106,48 +115,64 @@ export const getNavigationItems = (currentEntity: string): NavigationItem[] => [
   },
   { name: "Contacts", href: "/contacts", icon: Contact, category: "main" },
 
-  // Business operations
   {
-    name: "Commercial",
-    icon: HandCoins,
+    name: "Offres",
+    href: (entity) => getEntityLink("/offres", entity),
+    icon: FileText,
     category: "business",
-    children: [
-      {
-        name: "Opportunités",
-        href: (entity) => getEntityLink("/opportunities", entity),
-        icon: Briefcase,
-        badge: { text: "Nouveau", variant: "success" },
-        entitySpecific: true,
-      },
-      {
-        name: "Offres",
-        href: (entity) => getEntityLink("/offres", entity),
-        icon: FileText,
-        entitySpecific: true,
-      },
-      {
-        name: "Proformas",
-        href: (entity) => getEntityLink("/proformas", entity),
-        icon: FileText,
-        entitySpecific: true,
-      },
+    entitySpecific: true,
+  },
+
+  {
+    name: "Affaires",
+    href: (entity) => getEntityLink("/affaires", entity),
+    icon: FileText,
+    category: "business",
+    entitySpecific: true,
+  },
+
+  // Business operations
+  // {
+  //   name: "Commercial",
+  //   icon: HandCoins,
+  //   category: "business",
+  //   children: [
+      // {
+      //   name: "Opportunités",
+      //   href: (entity) => getEntityLink("/opportunities", entity),
+      //   icon: Briefcase,
+      //   badge: { text: "Nouveau", variant: "success" },
+      //   entitySpecific: true,
+      // },
+      // {
+      //   name: "Offres",
+      //   href: (entity) => getEntityLink("/offres", entity),
+      //   icon: FileText,
+      //   entitySpecific: true,
+      // },
+      // {
+      //   name: "Proformas",
+      //   href: (entity) => getEntityLink("/proformas", entity),
+      //   icon: FileText,
+      //   entitySpecific: true,
+      // },
       
 
-      {
-        name: "Affaires",
-        href: (entity) => getEntityLink("/affaires", entity),
-        icon: FileText,
-        entitySpecific: true,
-      },
+      // {
+      //   name: "Affaires",
+      //   href: (entity) => getEntityLink("/affaires", entity),
+      //   icon: FileText,
+      //   entitySpecific: true,
+      // },
       
-      {
-        name: "Factures",
-        href: (entity) => getEntityLink("/factures", entity),
-        icon: FileText,
-        entitySpecific: true,
-      },
-    ],
-  },
+      // {
+      //   name: "Factures",
+      //   href: (entity) => getEntityLink("/factures", entity),
+      //   icon: FileText,
+      //   entitySpecific: true,
+      // },
+  //  ],
+  //},
   {
     name: "Produits",
     href: (entity) => getEntityLink("/products", entity),
@@ -155,19 +180,8 @@ export const getNavigationItems = (currentEntity: string): NavigationItem[] => [
     category: "business",
     entitySpecific: true,
   },
-  {
-    name: "Formations",
-    href: (entity) => getEntityLink("/formations", entity),
-    icon: GraduationCap,
-    category: "business",
-    entitySpecific: true,
-  },
-  {
-    name: "Rapports",
-    href: "/rapports",
-    icon: FileBarChart,
-    category: "business",
-  },
+
+  
   { name: "Courriers", href: "/courriers", icon: Mail, category: "business" },
 
   // System category

@@ -2,22 +2,23 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useServices } from '@/AppHooks';
 import { ProductBase, ProductDetail, ProductEdit, CategoryBase } from '@/interfaces';
 import { PlusCircle, Pencil, Trash2, X, AlertCircle, Loader2, Package, Layers, FileText } from 'lucide-react';
+import { Produit } from '@/types/produit';
 
 const ProductManagement = () => {
   const { productService, categoryService } = useServices();
-  const [products, setProducts] = useState<ProductBase[]>([]);
+  const [products, setProducts] = useState<Produit[]>([]);
   const [categories, setCategories] = useState<CategoryBase[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState<ProductDetail | null>(null);
+  const [currentProduct, setCurrentProduct] = useState<Produit | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
-  const [formData, setFormData] = useState<ProductEdit>({
+  const [formData, setFormData] = useState<Produi>({
     code: '',
     name: '',
-    category: 0
+    departement: 0
   });
 
   const loadData = useCallback(async () => {
@@ -61,7 +62,7 @@ const ProductManagement = () => {
     }
   };
 
-  const handleEdit = async (product: ProductBase) => {
+  const handleEdit = async (product: Produit) => {
     setIsLoading(true);
     try {
       const detailedProduct = await productService.getById(product.id);
@@ -69,7 +70,7 @@ const ProductManagement = () => {
       setFormData({
         code: detailedProduct.code,
         name: detailedProduct.name,
-        category: detailedProduct.category.id
+        departement: detailedProduct.departement
       });
       setIsModalOpen(true);
     } catch (err) {
@@ -113,8 +114,8 @@ const ProductManagement = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getCategoryName = (product: ProductDetail) => {
-    return product.category?.name || 'Catégorie inconnue';
+  const getCategoryName = (product: Produit) => {
+    return product.departement || 'departements inconnue';
   };
 
   const getReportCount = (product: ProductDetail) => {
@@ -205,15 +206,10 @@ const ProductManagement = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center text-sm text-gray-600">
                         <Layers className="h-4 w-4 mr-2" />
-                        <span>{getCategoryName(product as ProductDetail)}</span>
+                        <span>{getCategoryName(product as Produit)}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <FileText className="h-4 w-4 mr-2" />
-                        <span>{getReportCount(product as ProductDetail)} rapports</span>
-                      </div>
-                    </td>
+                    
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
                       <button
                         onClick={() => handleEdit(product)}

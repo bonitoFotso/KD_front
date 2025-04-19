@@ -22,6 +22,7 @@ import { ContactBase, ContactEdit } from './itf';
 import { OffreDetail, OffreInitData } from './types/offre';
 import { OffreFormData } from './views/offres/types';
 import { OffreStatus } from './components/offre/ActionsCard';
+import { Produit } from './types/produit';
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
@@ -112,6 +113,10 @@ export const clientService = {
   delete: async (id: number) => {
     await api.delete(`/clients/${id}/`);
   },
+  getDocs: async (id: number) => {
+    const { data } = await api.get<SiteBase[]>(`/clients/${id}/docs/`);
+    return data;
+  },
   getSites: async (id: number) => {
     const { data } = await api.get<SiteBase[]>(`/clients/${id}/sites/`);
     return data;
@@ -143,6 +148,28 @@ export const clientService = {
   getRapports: async (id: number) => {
     const { data } = await api.get<RapportBase[]>(`/clients/${id}/rapports/`);
     return data;
+  }
+};
+
+export const categorieService = {
+  getAll: async () => {
+    const { data } = await api.get<CategoryBase[]>('/categories/');
+    return data;
+  },
+  getById: async (id: number) => {
+    const { data } = await api.get<CategoryDetail>(`/categories/${id}/`);
+    return data;
+  },
+  create: async (category: CategoryEdit) => {
+    const { data } = await api.post<CategoryDetail>('/categories/', category);
+    return data;
+  },
+  update: async (id: number, category: Partial<CategoryEdit>) => {
+    const { data } = await api.put<CategoryDetail>(`/categories/${id}/`, category);
+    return data;
+  },
+  delete: async (id: number) => {
+    await api.delete(`/categories/${id}/`);
   }
 };
 
@@ -226,19 +253,19 @@ export const categoryService = {
 // Product Service
 export const productService = {
   getAll: async () => {
-    const { data } = await api.get<ProductBase[]>('/products/');
+    const { data } = await api.get<Produit[]>('/products/');
     return data;
   },
   getById: async (id: number) => {
-    const { data } = await api.get<ProductDetail>(`/products/${id}/`);
+    const { data } = await api.get<Produit>(`/products/${id}/`);
     return data;
   },
   create: async (product: ProductEdit) => {
-    const { data } = await api.post<ProductDetail>('/products/', product);
+    const { data } = await api.post<Produit>('/products/', product);
     return data;
   },
   update: async (id: number, product: Partial<ProductEdit>) => {
-    const { data } = await api.put<ProductDetail>(`/products/${id}/`, product);
+    const { data } = await api.put<Produit>(`/products/${id}/`, product);
     return data;
   },
   delete: async (id: number) => {

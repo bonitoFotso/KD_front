@@ -11,7 +11,8 @@ export interface Client {
     region_nom: string;
     pays_nom: string;
     secteur_activite: string;
-    agreer: boolean;
+    agree: boolean;
+    est_client: boolean;
     agreement_fournisseur: boolean;
     contacts_count: number;
     offres_count: number;

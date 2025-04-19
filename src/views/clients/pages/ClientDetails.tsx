@@ -67,7 +67,8 @@ const ClientDetailsPage: React.FC = () => {
         factureService.getByClient(parseInt(id)),
         opportuniteService.getByClient(parseInt(id)),
         formationService.getByClient(parseInt(id)),
-        rapportService.getByClient(parseInt(id))
+        rapportService.getByClient(parseInt(id)),
+        clientService.getDocs(parseInt(id)),
       ]);
       
       setClient(clientData);
@@ -110,24 +111,6 @@ const ClientDetailsPage: React.FC = () => {
     navigate(`/clients/${id}/edit`);
   };
 
-  const handleDelete = async () => {
-    setIsSubmitting(true);
-    try {
-      await clientService.delete(parseInt(id!));
-      toast("Succès", {
-        description: "Client supprimé avec succès"
-      });
-      navigate('/clients');
-    } catch (err) {
-      console.error('Error deleting client:', err);
-      toast("Erreur", {
-        description: "Erreur lors de la suppression du client"
-      });
-    } finally {
-      setIsSubmitting(false);
-      setDeleteDialogOpen(false);
-    }
-  };
 
   const handleCreateOpportunite = () => {
     navigate(`/opportunities/creation?client=${id}`);
@@ -231,7 +214,6 @@ const ClientDetailsPage: React.FC = () => {
       <ClientHeader 
         client={client}
         onEdit={handleEdit}
-        onDelete={() => setDeleteDialogOpen(true)}
         onCreateOpportunity={handleCreateOpportunite}
         isSubmitting={isSubmitting}
       />
@@ -264,14 +246,7 @@ const ClientDetailsPage: React.FC = () => {
         onCreateOpportunite={handleCreateOpportunite}
       />
 
-      {/* Dialogue de confirmation de suppression */}
-      <ClientDeleteDialog 
-        open={deleteDialogOpen}
-        clientName={client.nom}
-        isSubmitting={isSubmitting}
-        onClose={() => setDeleteDialogOpen(false)}
-        onConfirm={handleDelete}
-      />
+     
     </div>
   );
 };

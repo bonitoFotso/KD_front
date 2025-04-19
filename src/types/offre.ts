@@ -7,7 +7,7 @@ export interface Produit {
   id: number;
   name: string;
   code: string;
-  category: string;
+  departement: string;
   prix: number;
 }
 

@@ -14,7 +14,6 @@ import {
   Building2,
   Briefcase,
   Edit,
-  Trash2,
   PlusCircle,
   BadgeCheck,
   Store,
@@ -25,7 +24,6 @@ import { cn } from "@/lib/utils";
 interface ClientHeaderProps {
   client: ClientDetails;
   onEdit: () => void;
-  onDelete: () => void;
   onCreateOpportunity: () => void;
   isSubmitting: boolean;
 }
@@ -33,7 +31,6 @@ interface ClientHeaderProps {
 const ClientHeader: React.FC<ClientHeaderProps> = ({
   client,
   onEdit,
-  onDelete,
   onCreateOpportunity,
   isSubmitting,
 }) => {
@@ -60,7 +57,7 @@ const ClientHeader: React.FC<ClientHeaderProps> = ({
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            {client.agreer && (
+            {client.agree && (
               <Badge
                 variant="outline"
                 className="text-green-600 border-green-200 bg-green-50"
@@ -123,15 +120,7 @@ const ClientHeader: React.FC<ClientHeaderProps> = ({
             <Edit className="h-4 w-4 mr-2" />
             Modifier
           </Button>
-          <Button
-            variant="outline"
-            className="border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700"
-            onClick={onDelete}
-            disabled={isSubmitting}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Supprimer
-          </Button>
+          
           <Button onClick={onCreateOpportunity} disabled={isSubmitting}>
             <PlusCircle className="h-4 w-4 mr-2" />
             Nouvelle opportunité

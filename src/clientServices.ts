@@ -1,12 +1,13 @@
-import { Client, ClientEdit, ClientList, ContactEdit, MailEdit, Pays, Region, Site, SiteEdit, SiteList, Ville } from "./itf";
+import { Client, ClientEdit, ClientList, ContactEdit, MailEdit, Site, SiteEdit, SiteList } from "./itf";
 import { api } from "./services";
 import { Contact } from "./types/contact";
+import { Pays, Region, Ville } from "./types/localisations";
 
 
 
 export const paysService = {
   getAll: async () => {
-    const { data } = await api.get<Pays>('/pays/');
+    const { data } = await api.get<Pays[]>('/pays/');
     return data;
   },
 

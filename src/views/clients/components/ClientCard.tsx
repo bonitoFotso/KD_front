@@ -23,30 +23,8 @@ import {
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { Client } from '@/types/client';
 
-interface Client {
-  id: number;
-  c_num: string;
-  nom: string;
-  email: string;
-  telephone: string;
-  ville_nom: string;
-  region_nom: string;
-  secteur_activite: string;
-  agreer: boolean;
-  agreement_fournisseur: boolean;
-  contacts_count: number;
-  offres_count: number;
-  affaires_count: number;
-  factures_count: number;
-  is_client: string;
-  bp: string;
-  quartier: string;
-  matricule: string;
-  entite: string;
-  opportunities_count: number;
-  courriers_count: number;
-}
 
 interface StatItemProps {
   value: number;
@@ -135,7 +113,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              {client.agreer && (
+            {client.est_client && (
+                <Badge variant="outline" className="text-blue-600 border-green-200 bg-blue-50">
+                  <BadgeCheck className="h-3 w-3 mr-1" />
+                  Client
+                </Badge>
+              )}
+              {client.agree && (
                 <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
                   <BadgeCheck className="h-3 w-3 mr-1" />
                   Agréé

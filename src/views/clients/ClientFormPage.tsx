@@ -109,11 +109,16 @@ const ClientFormPage: React.FC = () => {
   // Function to handle region change
   const handleRegionChange = useCallback((regionId: number) => {
     if (regionId) {
-      villeService.getByRegion(regionId).then((data) => setVilles(data));
+      const selectedRegion = regions.find(region => region.id === regionId);
+      if (selectedRegion) {
+        setVilles(selectedRegion.villes ?? []);
+      } else {
+        setVilles([]);
+      }
     } else {
       setVilles([]);
     }
-  }, [villeService]);
+  }, [regions]);
 
   // Charger les entités, regions et villes
   useEffect(() => {
@@ -134,11 +139,12 @@ const ClientFormPage: React.FC = () => {
               nom: client.nom,
               email: client.email || '',
               telephone: client.telephone || '',
-              ville: client.ville,
-              region: client.region,
+              ville: client.ville.id,
+              region: client.ville.region_nom,
               secteur_activite: client.secteur_activite || '',
-              agreer: client.agreer || false,
+              agree: client.agree || false,
               agreement_fournisseur: client.agreement_fournisseur || false,
+              est_client: client.est_client || true,
               bp: client.bp || '',
               quartier: client.quartier || '',
               matricule: client.matricule || '',
