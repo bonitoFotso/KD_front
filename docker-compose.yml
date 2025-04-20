@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  # Service pour l'application React en développement //test6
+  # Service pour l'application React en développement //test8
   frontend-dev:
     build:
       context: .
