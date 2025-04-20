@@ -7,6 +7,6 @@ build
 .env.development.local
 .env.test.local
 .env.production.local
-Dockerfile*
-docker-compose*
+#Dockerfile*
+#docker-compose*
 README.md
