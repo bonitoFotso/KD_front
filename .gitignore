@@ -9,7 +9,7 @@
 
 # Production
 /build
-/dist
+#/dist
 /out
 /.next/
 /out/
