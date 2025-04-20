@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Service pour l'application React en développement dd sa
+  # Service pour l'application React en développement s
   frontend-dev:
     build:
       context: .
